@@ -1,6 +1,8 @@
+// app/index.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'expo-router';
 import { loginSchema, LoginData } from '../lib/schemas/TextSchemas';
 import '../global.css';
 
@@ -8,6 +10,7 @@ export default function LoginScreen() {
   const { setValue, getValues } = useForm<LoginData>();
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [validFields, setValidFields] = useState<Record<string, boolean>>({});
+  const router = useRouter();
 
   const onSubmit = () => {
     const result = loginSchema.safeParse(getValues());
@@ -16,6 +19,11 @@ export default function LoginScreen() {
       console.log('✅ Datos válidos:', result.data);
       setErrors({});
       setValidFields({ email: true, password: true });
+      
+      router.push({
+        pathname: '/welcome',  // ← Solo el nombre del archivo en app/
+        params: { userEmail: getValues().email }
+      });
     } else {
       const fieldErrors: Record<string, string[]> = {};
       const fieldValidity: Record<string, boolean> = { email: true, password: true };
